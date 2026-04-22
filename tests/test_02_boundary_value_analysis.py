@@ -14,15 +14,14 @@ Distributia testelor:
          c_12 = c pe ultima pozitie din x
 
 Total cazuri:
-    C_111: (1, 'a', 'a', 'y), (20, '...', 'a', 'y), (20, '...', 'u', 'y)
-                                                          (3 cazuri)
-    C_112: la fel cu 'n' in loc de 'y'                    (3 cazuri)
-    C_121: (1, 'a', 'b', 'y'), (20, '...', 'z', 'y')      (2 cazuri)
-    C_122: la fel cu 'n' in loc de 'y'                    (2 cazuri)
-    C_2  : (0, _, _, _)                                    (1 caz)
-    C_3  : (21, _, _, _)                                   (1 caz)
-                                                  ------------------
-                                                  Total: 12 teste
+    C_111: (1, 'a', 'a', 'y), (20, '...', 'a', 'y), (20, '...', 'u', 'y) (3 cazuri)
+    C_112: la fel cu 'n' in loc de 'y'                                   (3 cazuri)
+    C_121: (1, 'a', 'b', 'y'), (20, '...', 'z', 'y')                     (2 cazuri)
+    C_122: la fel cu 'n' in loc de 'y'                                   (2 cazuri)
+    C_2  : (0, _, _, _)                                                  (1 caz)
+    C_3  : (21, _, _, _)                                                  (1 caz)
+    ------------------
+    Total: 12 teste
 """
 
 import unittest

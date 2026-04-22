@@ -68,8 +68,7 @@ class StringSearcher:
             return {
                 'status': 'INVALID_N',
                 'position': -1,
-                'message': f'Input an integer between {self.MIN_LENGTH} '
-                           f'and {self.MAX_LENGTH}',
+                'message': f'Input an integer between {self.MIN_LENGTH} ' f'and {self.MAX_LENGTH}',
                 'continue_search': False
             }
 
