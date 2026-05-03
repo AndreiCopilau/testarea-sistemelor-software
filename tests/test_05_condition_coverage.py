@@ -2,21 +2,23 @@
 TEST STRUCTURAL (c): Condition Coverage
 =======================================
 
-Fiecare conditie individuala dintr-o decizie compusa trebuie sa ia atat
-True cat si False.
+Conform suportului de curs (pagina 9), fiecare conditie individuala dintr-o
+decizie compusa trebuie sa ia atat True cat si False.
 
-Conditii individuale extrase din decizii:
-| Decizie                          | Conditii individuale       |
-| n < 1 || n > 20                  | n < 1, n > 20              |
-| (not found) and (i < n)          | not found, i < n           |
-| text[i] == c                     | text[i] == c               |
-| repeat_option == 'y' || == 'Y'   | == 'y', == 'Y'             |
+Conditii individuale extrase din decizii (conform tabelului din curs):
+| Decizie (nod CFG)                        | Conditii individuale          |
+| while (n<1 || n>20) -- nod 4             | n < 1, n > 20                |
+| for (i=0; i<n; i++) -- nod 6             | i < n                        |
+| for (i=0; !found && i<n; i++) -- nod 14  | found, i < n                 |
+| if (a[i] == c) -- nod 15                 | a[i] == c                    |
+| if (found) -- nod 17                     | found                        |
+| while (resp=='y' || resp=='Y') -- nod 24 | response=='y', response=='Y' |
 
-Conform tabelului din curs:
-| n=0   | INVALID                    | n<1=True                   |
-| n=25  | INVALID                    | n>20=True                  |
-| (1, 'a', 'A', 'y')                | == 'y' = True              |
-| (1, 'a', 'B', 'Y')                | == 'Y' = True              |
+Conform tabelului din curs (pagina 9):
+| n=0                  | INVALID           | n<1=True                     |
+| n=25                 | INVALID           | n>20=True                    |
+| (1, 'a', 'A', 'y')  | poz 1, continua   | response=='y'=True           |
+| (1, 'a', 'B', 'Y')  | nu apare, continua| response=='Y'=True           |
 """
 
 import unittest
