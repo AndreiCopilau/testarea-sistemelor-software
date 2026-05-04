@@ -6,7 +6,7 @@
 
 ---
 
-## 1. Configurația folosită
+## 1. Configurația folosită + componența echipei
 
 | Componentă | Versiune |
 |---|---|
@@ -22,6 +22,12 @@ Instalare dependințe:
 ```bash
 pip install coverage mutmut --break-system-packages
 ```
+
+### Echipa
+- Copilău Andrei
+- Florea Mihai-Alexandru
+- Piele Stefan-Vladut
+- Filote Toma-Andrei
 
 ---
 
