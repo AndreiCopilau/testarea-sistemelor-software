@@ -87,55 +87,7 @@ Graful de flux de control reproduce exact cel din suportul de curs, cu **16 nodu
 Noduri: 1-3, 4, 5, 6, 7, 8, 9-13, 14, 15, 16, 17, 18, 19-20, 21-23, 24, 25
 ```
 
-```mermaid
-flowchart TD
-    %% Validare N - Bucla do-while de la inceput
-    1_3((1-3)) --> 4{4}
-    4 -- "n < 1 || n > 20" --> 1_3
-    4 -- "False" --> 5[5]
-
-    %% Citire caractere - Bucla for i < n
-    5 --> 6{6}
-    6 -- "True" --> 7[7]
-    7 --> 6
-    6 -- "False" --> 8[8]
-
-    %% Initializare cautare
-    8 --> 9_13((9-13))
-
-    %% Bucla de cautare - for !found && i < n
-    9_13 --> 14{14}
-    14 -- "True (!found && i < n)" --> 15{15}
-
-    %% Decizia if a[i] == c
-    15 -- "True (a[i] == c)" --> 16[16]
-    15 -- "False" --> 14
-    16 --> 14
-
-    %% Decizie afisare dupa bucla
-    14 -- "False (Loop Exit)" --> 17{17}
-    17 -- "True (found)" --> 18[18]
-    17 -- "False" --> 19_20((19-20))
-
-    %% Pregatire repetare
-    18 --> 21_23((21-23))
-    19_20 --> 21_23
-    21_23 --> 24{24}
-
-    %% Decizie finala - repeat?
-    24 -- "True ('y' || 'Y')" --> 9_13
-    24 -- "False" --> 25([25: END])
-
-    %% Stiluri
-    classDef decision fill:#fff4e6,stroke:#d97706,stroke-width:2px;
-    classDef action fill:#e6f4ff,stroke:#1d4ed8,stroke-width:2px;
-    classDef terminal fill:#f3e8ff,stroke:#7e22ce,stroke-width:2px;
-    classDef groupNode fill:#fff,stroke:#333,stroke-width:2px;
-
-    class 4,6,14,15,17,24 decision;
-    class 5,7,8,16,18 action;
-    class 25 terminal;
-    class 1_3,9_13,19_20,21_23 groupNode;
+![mermaid](./docs/mermaid-diagram.png)
 
 
 Complexitatea ciclomatică McCabe:
@@ -143,8 +95,7 @@ Complexitatea ciclomatică McCabe:
 V(G) = e - n + 1 = 22 - 16 + 1 = 7  (graf complet conectat)[2]
 ```
 
-Vezi `docs/cfg.mermaid` (vizualizabil pe https://mermaid.live sau direct
-în GitHub).
+Vezi `docs/cfg.mermaid` pentru codul sursa al imaginii.
 
 ---
 
