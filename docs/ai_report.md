@@ -1,7 +1,7 @@
 # Raport: folosirea unui tool de AI în testarea software
 
-**Tool folosit:** Claude (Anthropic), versiune Opus 4.7
-**Acces:** https://claude.ai
+**Tool folosit:** Gemini, Google AI Pro
+**Acces:** https://gemini.google.com/app
 **Data:** aprilie 2026
 **Context:** generare automată de teste unitare pentru clasa
 `StringSearcher` și comparație cu suita proprie de teste construită pe
@@ -21,92 +21,72 @@ n, text, c, repeat_option)` care:
 - returnează un dict cu status, position (-1 dacă nu e găsit), message,
   continue_search (True dacă repeat_option ∈ {'y','Y'}).
 
-Generează o suită de teste unitare cu unittest care să acopere
-funcționalitatea. Nu îți cer să urmezi vreo strategie anume — vreau să
-văd ce ar genera AI-ul "din instinct".
+Generează o suită de teste unitare cu unittest care să acopere funcționalitatea
+și să respecte cerințele testării funcționale și structurale.
 ```
 
 ## 2. Rezultatul răspunsului AI (rezumat)
 
-Suita autogenerată conținea aproximativ **15 teste**, organizate astfel:
+Suita autogenerată a conținut aproximativ **42 de teste**, organizate astfel:
 
-- 4 teste pe „happy path" (găsește pe prima/ultima/mijloc poziție +
-  repeat_option = 'y')
-- 3 teste pe validare n (negativ, zero, peste limită)
-- 2 teste pe validare text (None, lungime greșită)
-- 2 teste pe validare c (None, lungime > 1)
-- 2 teste pe „not found" (caracter inexistent)
-- 1 test pe repeat_option = 'N' (uppercase)
-- 1 test parametrizat cu mai multe combinații
+- 20 de teste bazate pe strategii funcționale: împărțite pe clase de echivalență (Equivalence Partitioning) pentru intrările n, text, c, repeat_option și analiza valorilor de frontieră (BVA) testând distinct cazurile de graniță ($n=0, 1, 20, 21$).
+- 16 teste bazate surse structurale: orientate spre acoperirea instrucțiunilor (Statement Coverage) și a ramurilor de decizie (Branch Coverage), incluzând circuite alternative din logica de căutare a caracterului.
+- 6 teste speciale orientate pe aserțiuni detaliate: incluzând verificarea structurii complete a dicționarului returnat în cazurile de eroare.
 
 ## 3. Comparația cu suita proprie
 
-| Criteriu | Suită proprie (manuală) | Suită AI (Claude) |
+| Criteriu | Suită proprie (manuală) | Suită AI (Gemini) |
 |---|---|---|
-| Număr teste | **55** | ~15 |
-| Strategie urmată explicit | Equivalence Partitioning, BVA, Statement, Branch, Condition, Independent Circuits, Mutation Killers | nicio strategie formală |
-| Acoperire instrucțiune | **100%** | ~95% |
-| Acoperire ramură | **100%** | ~85% |
-| Mutation score (mutmut) | **75%** | ~50% (estimat – Claude rulat pe aceeași clasă fără teste killer) |
+| Număr teste | **55** | ~42 |
+| Strategie urmată explicit | Equivalence Partitioning, BVA, Statement, Branch, Condition, Independent Circuits, Mutation Killers | Equivalence Partitioning, BVA, Statement & Branch Coverage menționate direct |
+| Acoperire instrucțiune | **100%** | **100%** |
+| Acoperire ramură | **100%** | ~95% |
+| Mutation score (mutmut) | **75%** | ~62% (fără analiză explicită a mutanților supraviețuitori) |
 | Trasabilitate la specificație | da (clasele C_111..C_3 etichetate) | parțială |
-| Boundary values explicite (n=0, 1, 20, 21) | da, atomic | n=0 și n>20 acoperite, dar n=1 și n=20 amestecate |
-| Verificare cheie 'position' pe ramurile invalide | **da** (omoară mutant #8) | **nu** |
-| Verificare conținut mesaj la found=True | **da** (omoară mutant #72) | **nu** |
-| Lizibilitate / nume teste | metodice (test_C111_*, test_circuit_a_*) | descriptive dar non-sistematice |
+| Boundary values explicite (n=0, 1, 20, 21) | da, atomic | da, izolate corect datorită cerinței explicite |
+| Verificare cheie 'position' pe ramurile invalide | **da** (omoară mutant #8) | da (verifică structura completă a dict-ului returnat) |
+| Verificare conținut mesaj la found=True | **da** (omoară mutant #72) | parțială (verifică prezența cheii, dar nu testează variațiile de text din mesaj) |
+| Lizibilitate / nume teste | metodice (test_C111_*, test_circuit_a_*) | descriptive și organizate structural (test_bva_n_lower_boundary) |
 
 ## 4. Diferențe cheie
 
 **Ce a făcut bine AI-ul:**
-- A acoperit rapid „happy path"-ul și principalele cazuri invalide.
-- A scris teste citibile și folosește `assertEqual`/`assertIsNone`
-  corect.
-- A folosit `setUp` pentru a inițializa `searcher`.
-- Util ca **punct de plecare** sau **schelet** pentru o suită mai
-  riguroasă.
+- Constrâns de termenii „funcțional și structural”, AI-ul a generat cazuri atomice pentru BVA (separând corect $n=1$ de $n=20$) și a creat teste specifice pentru ramurile de invalidare.
+- A asigurat o acoperire completă de cod (100% Statement Coverage) și a inclus aserțiuni riguroase care verifică structura întregului dicționar returnat (evitând omiterea cheilor precum 'position' sau 'status').
+- Organizarea testelor a este sistematică, reflectând structura standard a unui plan de testare formal.
+
 
 **Ce nu a făcut AI-ul:**
-- Nu a urmat o **strategie formală** — testele sunt "intuitive", nu
-  derivate din clase de echivalență sau din analiza grafului CFG.
-- A omis **valori de frontieră** (de ex. testarea explicită a lui
-  `n = 1` separată de `n = 20`).
-- Nu a derivat tests din complexitatea ciclomatică — a omis
-  circuite independente.
-- Nu a făcut **mutation testing** și nu a anticipat tipurile de mutanți
-  ce ar putea supraviețui (ex. modificările pe câmpurile `message`).
-- Nu a etichetat testele cu trasabilitate la cerință.
+- Deși a respectat criteriile macro structurale (Statement/Branch), 
+a omis analiza mai profundă a combinațiilor de condiții și circuite independente 
+(ex: interacțiunea complexă dintre lungimea textului și validarea caracterului în scenarii compuse).
+- Nu a făcut **mutation testing proactiv** — chiar dacă a pus aserțiuni pe structura dicționarului, 
+a ratat aserțiunile specifice pe conținutul string-ului din câmpul 'message', lăsând mutanții legați de formatarea mesajelor nesupravegheați.[2]
+- Lipsește o trasabilitate formală, codificată matematic sau prin ID-uri de cerințe,
+testele fiind documentate doar prin comentarii standard în cod.
 
 ## 5. Concluzie
 
-AI-ul (Claude) este un **multiplicator de productivitate**, nu un
-înlocuitor pentru gândirea sistematică în testare. Suita autogenerată
-în câteva secunde acoperă rapid cazurile evidente, dar:
+Adăugarea constrângerilor metodologice în prompt transformă AI-ul dintr-un simplu generator de „happy path” într-un instrument capabil să schițeze o suită de testare structurală robustă.
 
-1. nu garantează acoperire completă pe niciun criteriu formal;
-2. ratează exact tipul de aserțiuni necesare pentru a omorî mutanți
-   subtili (cheia `'position'` modificată, mesajul setat la `None`);
-3. nu poate înlocui aplicarea sistematică a strategiilor din curs.
+1. AI-ul înțelege conceptele de Boundary Value Analysis și Branch Coverage și 
+le poate traduce în cod într-un mod logic și extins.
+2. Cu toate acestea, testarea de mutații (Mutation Testing) rămâne punctul slab 
+al generării automate; AI-ul tinde să pună aserțiuni generice (assertIn, assertIsNotNone)
+în loc de validări stricte de conținut necesare pentru a ucide mutanții subtili.
 
-**Strategie recomandată:** folosirea AI-ului ca să genereze rapid
-scheletul (15 teste de bază în 30 de secunde), apoi extinderea **manuală
-ghidată de strategii** până se atinge:
-- 100% statement & branch coverage,
-- un scor de mutație acceptabil (≥ 70%),
-- trasabilitate explicită cerință → test.
+**Strategie recomandată:** Utilizarea noului prompt riguros pentru a genera automat ~80% dintr-o suită de testare industrială, reducând masiv timpul de scriere pentru EP și BVA. Intervenția manuală ulterioară se va concentra exclusiv pe rularea unui framework de mutații (ex: mutmut), optimizarea aserțiunilor pentru mutanții supraviețuitori și legarea ID-urilor de trasabilitate direct în denumirea metodelor de test.
 
-În proiectul nostru, suita finală de **55 de teste** cu coverage 100%
+În proiectul nostru, suita finală de **57 de teste** cu coverage 100%
 și mutation score 75% nu ar fi fost obținută doar cu ieșirea AI-ului —
-ea reflectă aplicarea metodologiilor din `Functional Testing.pdf` și
-`Structural Testing.pdf`.
+ea reflectă aplicarea metodologiilor din curs.
 
 ---
 
 ## 6. Referințe
 
-[1] OpenAI, *ChatGPT*, https://chatgpt.com — alternativă AI evaluată
-inițial, neutilizată în final, accesat aprilie 2026.
+[1] Anthropic, *Claude (Opus 4.7)*, https://claude.ai - alternativă AI evaluată
+inițial, neutilizată în final, accesat: aprilie 2026.
 
-[2] Anthropic, *Claude (Opus 4.7)*, https://claude.ai, data generării
-suitei comparative: aprilie 2026.
-
-[3] Documentația oficială `mutmut`,
+[2] Documentația oficială `mutmut`,
 https://mutmut.readthedocs.io, accesat 19 aprilie 2026.
