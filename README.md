@@ -276,7 +276,7 @@ Mutmut a fost ales pentru simplitatea sa și capacitatea de a genera mutanți re
 **Cum funcționează:**
 Mutmut funcționează prin injectarea unor erori controlate (mutanți) direct în codul sursă, pentru a evalua eficiența suitei de teste existente. Procesul începe prin crearea unei copii modificate a codului, urmată de rularea automată a testelor unitare; dacă cel puțin un test eșuează, mutantul este considerat „omorât” (killed), validând astfel capacitatea testelor de a detecta defecte, însă dacă toate testele trec, mutantul „supraviețuiește” (survived), semnalând o breșă în acoperirea logică a suitei de testare.[6]
 
-### 6.1. Rezultat inițial (cu primele 52 de teste)
+### 6.1. Rezultat inițial (cu primele 57 de teste)
 
 | Categorie | Număr |
 |---|---|
@@ -333,8 +333,8 @@ def test_kill_mutant_72_found_message_contains_position(self):
 
 | Categorie | Înainte | După |
 |---|---|---|
-| Omorâți | 68 | **75** |
-| Supraviețuitori | 32 | **25** |
+| Omorâți | 71 | **75** |
+| Supraviețuitori | 29 | **25** |
 | Timeout | 1 | 1 |
 
 Scor: **75/100 = 75%** (+7 mutanți omorâți, inclusiv #8 și #72 țintiți
